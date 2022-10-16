@@ -17,3 +17,4 @@ mix.js('resources/js/app.js', 'public/js')
     .css('resources/css/app.css', 'public/css')
     .copy('resources/img', 'public/img')
     .sourceMaps();
+    mix.disableNotifications();
