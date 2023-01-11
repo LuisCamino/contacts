@@ -15,7 +15,9 @@ class ContactController extends Controller
      */
     public function index()
     {
-        return view('contacts.index', ['contacts' => Contact::all()]);
+        $contacts = auth()->user()->contacts; 
+       
+        return view('contacts.index', compact('contacts'));
     }
 
     /**
@@ -43,8 +45,11 @@ class ContactController extends Controller
             'phone_number' => ['required', 'digits:9'],
             'age' => ['required', 'numeric', 'min:1', 'max:150'],
         ]);
+       
+        auth()->user()->contacts()->create($data);
         
-        Contact::create($data);
+        
+
 
         return redirect()->route('home');
     }
@@ -57,6 +62,8 @@ class ContactController extends Controller
      */
     public function show(Contact $contact)
     {
+        $this->authorize('view', $contact);
+
         return view('contacts.show', compact('contact'));
     }
 
@@ -68,7 +75,7 @@ class ContactController extends Controller
      */
     public function edit(Contact $contact)
     {
-    
+        $this->authorize('update', $contact);
         return view('contacts.edit', ['contact' => $contact]);
     }
 
@@ -81,6 +88,8 @@ class ContactController extends Controller
      */
     public function update(Request $request, Contact $contact)
     {
+        $this->authorize('update', $contact);
+
         $data = $request->validate([
             'name' => 'required',
             'email' => ['required', 'email'],
@@ -100,6 +109,7 @@ class ContactController extends Controller
      */
     public function destroy(Contact $contact)
     {
+        $this->authorize('delete', $contact);
         $contact->delete();
         return redirect()->route('home');   
     }
